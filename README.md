@@ -17,7 +17,7 @@ A modern, pixel-perfect, and highly responsive frontend dashboard built with Nex
 
 ## 🚀 Tech Stack
 
-*   **Framework**: Next.js 14 (App Router)
+*   **Framework**: Next.js 16.1.6 (App Router)
 *   **Language**: TypeScript
 *   **Styling**: Tailwind CSS (with custom utility classes and complex CSS Variables)
 *   **Icons**: Lucide React
