@@ -1,65 +1,64 @@
-import Image from "next/image";
+"use client";
+
+import Sidebar from "@/components/Sidebar";
+import Topbar from "@/components/Topbar";
+import { LightsCard } from "@/components/cards/LightsCard";
+import { WaterConsumptionCard } from "@/components/cards/WaterConsumptionCard";
+import { CarbonIntensityCard } from "@/components/cards/CarbonIntensityCard";
+import { EnergyConsumptionCard } from "@/components/cards/EnergyConsumptionCard";
+import { FootfallCard } from "@/components/cards/FootfallCard";
+import { useAtomValue } from "jotai";
+import { activeCardsAtom, type CardId } from "@/store/dashboardStore";
 
 export default function Home() {
+  const activeCards = useAtomValue(activeCardsAtom);
+
+  const cardMap: Record<CardId, React.ReactNode> = {
+    lights: <LightsCard />,
+    water: <WaterConsumptionCard />,
+    carbon: <CarbonIntensityCard />,
+    energy: <EnergyConsumptionCard />,
+    footfall: <FootfallCard />
+  };
+
+  let gridColsClass = "lg:grid-cols-[1fr_1fr_1fr]";
+  if (activeCards.length === 1) gridColsClass = "lg:grid-cols-1";
+  else if (activeCards.length === 2 || activeCards.length === 4) gridColsClass = "lg:grid-cols-2";
+  else if (activeCards.length === 3) gridColsClass = "lg:grid-cols-3";
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="w-full h-screen overflow-x-hidden overflow-y-auto custom-scrollbar text-white font-sans relative">
+      {/* 100% Full Width Topbar at the top */}
+      <div className="w-full z-30 flex-shrink-0 bg-transparent px-8 pt-8 lg:px-12">
+        <Topbar />
+      </div>
+
+      {/* Main Content Area (Sidebar + Grid) */}
+      <div className="flex w-full pb-8 pr-4 lg:pr-10 min-h-max">
+
+        {/* Sidebar Container - Sticky */}
+        <div className="flex flex-col items-start pl-4 flex-shrink-0 relative">
+          <div className="sticky top-8 h-[calc(100vh-6rem)] w-[90px]">
+            <Sidebar />
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+
+        {/* Dashboard Grid Container */}
+        <main className="flex-1 pl-8 w-full mt-2">
+          <div className={`grid grid-cols-1 ${gridColsClass} gap-6 items-start transition-all duration-300`}>
+            {activeCards.map((id, index) => {
+              let colSpan = "";
+              if (activeCards.length === 5 && index === 4) {
+                colSpan = "lg:col-span-1";
+              }
+              return (
+                <div key={id} className={`h-[380px] min-h-[380px] ${colSpan} transition-all`}>
+                  {cardMap[id]}
+                </div>
+              );
+            })}
+          </div>
+        </main>
+      </div>
     </div>
   );
 }
